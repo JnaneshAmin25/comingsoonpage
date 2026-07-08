@@ -257,7 +257,7 @@ const HeroSection = () => {
         )}
       </AnimatePresence>
 
-      <div className="relative mx-auto mt-20 md:mt-[78px] flex w-full max-w-7xl flex-col items-start justify-center gap-5 text-left lg:flex-row lg:items-center">
+      <div className="relative mx-auto mt-5 md:mt-[78px] flex w-full max-w-7xl flex-col items-start justify-center gap-5 text-left lg:flex-row lg:items-center">
         {/* Image — top on mobile, right side on desktop */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
