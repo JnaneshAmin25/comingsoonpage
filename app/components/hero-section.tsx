@@ -4,6 +4,7 @@ import {
   AnimatePresence,
   motion,
   type MotionValue,
+  useReducedMotion,
   useScroll,
   useTransform,
   useSpring,
@@ -11,8 +12,13 @@ import {
 import React, { FormEvent, useRef, useState } from "react";
 import Image from "next/image";
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 const HeroSection = () => {
   const ref = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const duration = prefersReducedMotion ? 0 : 0.7;
+  const makeTransition = (delay: number) => ({ duration, ease: EASE, delay });
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -69,10 +75,15 @@ const HeroSection = () => {
   return (
     <section
       ref={ref}
-      className="mx-auto flex min-h-screen w-screen flex-col items-start overflow-hidden bg-[#FAFDEE] px-4 pb-28 text-[#1F3A4B] sm:px-8 sm:pb-32 lg:px-16 lg:pb-40"
+      className="mx-auto flex min-h-screen w-full flex-col items-start overflow-hidden bg-[#FAFDEE] px-4 pb-28 text-[#1F3A4B] sm:px-8 sm:pb-32 lg:px-16 lg:pb-40"
     >
       {/* Header with Logo and CTA Button */}
-      <div className="z-50 flex w-full items-center justify-between py-6">
+      <motion.div
+        initial={{ opacity: 0, y: -24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={makeTransition(0)}
+        className="z-50 flex w-full items-center justify-between py-6"
+      >
         {/* Logo */}
         <div className="font-jakarta-sans text-2xl font-bold tracking-tight text-[#1F3A4B] lg:text-3xl">
           MOTION SOUL
@@ -102,7 +113,7 @@ const HeroSection = () => {
             </svg>
           </span>
         </motion.button>
-      </div>
+      </motion.div>
 
       <AnimatePresence>
         {isNotifyOpen && (
@@ -246,9 +257,14 @@ const HeroSection = () => {
         )}
       </AnimatePresence>
 
-      <div className="relative mx-auto mt-20 md:mt-42 flex w-full max-w-7xl flex-col items-start justify-center gap-5 text-left lg:flex-row lg:items-center">
+      <div className="relative mx-auto mt-12 md:mt-[78px] flex w-full max-w-7xl flex-col items-start justify-center gap-5 text-left lg:flex-row lg:items-center">
         {/* Image — top on mobile, right side on desktop */}
-        <div className="relative z-20 -mx-12 mt-6 w-[130%] self-center overflow-hidden pointer-events-none sm:-mx-8 sm:w-full lg:hidden">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={makeTransition(0.45)}
+          className="relative z-20 -mx-12 mt-2 w-[130%] self-center overflow-hidden pointer-events-none sm:-mx-8 sm:w-full lg:hidden"
+        >
           <Image
             src="/Easyplacehero1.png"
             alt="Hero Image"
@@ -258,45 +274,67 @@ const HeroSection = () => {
             priority
           />
           <div className="absolute inset-x-0 bottom-0 h-[48%] bg-gradient-to-t from-[#FAFDEE] via-[#FAFDEE]/90 via-[65%] to-transparent backdrop-blur-[1px]" />
-        </div>
+        </motion.div>
 
         {/* Title + subtitle */}
         <div className="relative -mt-[50vw] z-30 flex w-full flex-col items-center gap-2 text-center sm:-mt-64 md:-mt-72 lg:mt-0 lg:flex-1 lg:items-start lg:gap-5 lg:text-left">
-          <h1 className="font-jakarta-sans relative z-10 text-center lg:text-left text-4xl md:text-7xl font-medium tracking-[-0.08em] lg:text-9xl">
+          <motion.h1
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={makeTransition(0.15)}
+            className="font-jakarta-sans relative z-10 text-center lg:text-left text-4xl lg:text-7xl font-medium tracking-[-0.08em] xl:text-9xl"
+          >
             Empowering <span className="ml-2 lg:ml-4"></span> <br className="hidden lg:inline-flex ml-1 lg:ml-0" /> Every <span className="ml-2 lg:ml-4"></span> Soul <br className=" hidden lg:inline-flex ml-2 lg:ml-4" />
             Through <span className="ml-2 lg:ml-4"></span> Art
-          </h1>
-          <p className="font-jakarta-sans relative z-10 max-w-2xl text-center lg:text-left text-md lg:text-xl font-medium text-[#1F3A4B]">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={makeTransition(0.3)}
+            className="font-jakarta-sans relative z-10 max-w-2xl text-center lg:text-left text-md lg:text-xl font-medium text-[#1F3A4B]"
+          >
             A New Era of Artistic Expression
-          </p>
+          </motion.p>
+          <motion.span
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={makeTransition(0.4)}
+            className="font-jakarta-sans relative z-10 inline-block bg-gradient-to-r from-[#7F3486] via-[#B32B7E] to-[#F39E2D] bg-clip-text text-2xl font-bold uppercase tracking-[0.32em] text-transparent sm:text-3xl lg:text-4xl"
+          >
+            Coming Soon
+          </motion.span>
         </div>
 
-        {/* Desktop-only decorative SVG */}
-        <div className="absolute -right-[10%] top-0 z-0 hidden overflow-hidden pointer-events-none">
-          <LinePath
-            className=""
-            scrollYProgress={scrollYProgress}
-          />
-        </div>
+
 
         {/* Desktop-only image on the right */}
-        <div className="absolute -right-[22%] top-[-25%] z-20 hidden lg:block overflow-hidden pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={makeTransition(0.45)}
+          className="absolute -right-[8%] top-[-50%] z-20 hidden lg:-right-[10%] lg:w-[600px] lg:h-[750px] lg:block xl:-right-[15%] xl:w-[800px] xl:h-[1000px] 2xl:-right-[23%] 2xl:w-[900px] 2xl:h-[1100px] overflow-hidden pointer-events-none"
+        >
           <Image
             src="/Easyplacehero1.png"
             alt="Hero Image"
             width={900}
             height={1100}
-            className="object-contain"
+            className="h-full w-full object-contain"
             priority
           />
-        </div>
+        </motion.div>
       </div>
 
       {/* Added text centered after hero title - FIXED: added w-full and proper centering */}
       <div className="relative z-10 mt-[225px] w-full max-w-7xl text-center mx-auto lg:mt-[450px]">
-        <p className="font-jakarta-sans mx-auto text-xl font-[500] text-[#1F3A4B] sm:text-2xl lg:text-5xl [text-shadow:_0_2px_4px_rgba(0,0,0,0.1)] hover:[text-shadow:_0_4px_8px_rgba(0,0,0,0.2)] transition-shadow duration-300">
+        <motion.p
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={makeTransition(0.6)}
+          className="font-jakarta-sans mx-auto text-xl font-[500] text-[#1F3A4B] sm:text-2xl md:text-4xl xl:text-5xl [text-shadow:_0_2px_4px_rgba(0,0,0,0.1)] hover:[text-shadow:_0_4px_8px_rgba(0,0,0,0.2)] transition-shadow duration-300"
+        >
           Motion Soul Pty Ltd is an arts, culture and creative services company supporting dance and music education, accredited performing arts examinations, cultural productions, events, digital media and creative content.
-        </p>
+        </motion.p>
       </div>
 
       {/* <div className="rounded-4xl font-jakarta-sans w-full translate-y-[30vh] h-screen bg-gradient-to-t from-[#7F3486] to-[#FAFDEE] pb-10 text-[#FAFDEE]">

@@ -51,10 +51,10 @@ const Footer = () => {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="w-full max-w-2xl"
         >
-          <h2 className="whitespace-nowrap text-[21px] font-semibold leading-tight sm:text-3xl lg:text-[34px]">
+          <h2 className="text-[21px] font-semibold leading-tight sm:whitespace-nowrap sm:text-3xl lg:text-[34px]">
             Get notified when Motion Soul goes live.
           </h2>
-          <p className="mt-3 max-w-none whitespace-nowrap text-[11px] font-medium leading-6 text-[#FAFDEE]/75 sm:text-base lg:text-sm xl:text-base">
+          <p className="mt-3 max-w-none text-[11px] font-medium leading-6 text-[#FAFDEE]/75 sm:whitespace-nowrap sm:text-base lg:text-sm xl:text-base">
             Join the launch list and we will send you a short note when the new website is ready.
           </p>
 
@@ -117,7 +117,7 @@ const Footer = () => {
           </p>
           <a
             href="mailto:support@motionsoul.com.au"
-            className="mt-3 inline-flex max-w-full items-center gap-3 break-words text-xl font-semibold leading-tight text-[#FAFDEE] transition-colors hover:text-white sm:text-3xl lg:justify-end"
+            className="mt-3 inline-flex max-w-full items-center gap-3 break-words text-xl font-semibold leading-tight text-[#FAFDEE] transition-colors hover:text-white hover:underline sm:text-2xl lg:justify-end"
           >
             support@motionsoul.com.au
           </a>
@@ -130,7 +130,7 @@ const Footer = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="whitespace-nowrap py-6 text-center text-[14vw] font-bold leading-none tracking-tight text-white sm:text-[13vw] lg:text-[150px] xl:text-[170px]"
+          className="py-6 text-center text-[12vw] font-bold leading-none tracking-tight text-white sm:whitespace-nowrap sm:text-[13vw] lg:text-[150px] xl:text-[170px]"
         >
           MOTION SOUL
         </motion.h1>
@@ -140,9 +140,7 @@ const Footer = () => {
       <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-6 pb-8 pt-4 text-xs text-[#FAFDEE]/80 sm:flex-row sm:px-10 lg:px-16">
         <p>© {new Date().getFullYear()} Motion Soul Pty Ltd. All rights reserved.</p>
         <p className="flex items-center gap-2">
-          <span>Made with</span>
-          <span className="text-[#F39E2D]">♥</span>
-          <span>in Sydney, Australia</span>
+          <span>Sydney, New South Wales, Australia</span>
         </p>
       </div>
 
