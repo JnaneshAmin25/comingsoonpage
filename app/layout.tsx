@@ -19,8 +19,9 @@ const jakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Coming Soon",
-  description: "Coming Soon",
+  title: "Motion Soul | Empowering Every Soul Through Art — Coming Soon",
+  description:
+    "Motion Soul is an arts, culture and creative services company supporting dance and music education, accredited performing arts examinations, cultural productions, events, digital media and creative content. Launching soon.",
 };
 
 export default function RootLayout({

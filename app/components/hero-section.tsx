@@ -257,16 +257,16 @@ const HeroSection = () => {
         )}
       </AnimatePresence>
 
-      <div className="relative mx-auto mt-12 md:mt-[78px] flex w-full max-w-7xl flex-col items-start justify-center gap-5 text-left lg:flex-row lg:items-center">
+      <div className="relative mx-auto mt-20 md:mt-[78px] flex w-full max-w-7xl flex-col items-start justify-center gap-5 text-left lg:flex-row lg:items-center">
         {/* Image — top on mobile, right side on desktop */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={makeTransition(0.45)}
-          className="relative z-20 -mx-12 mt-2 w-[130%] self-center overflow-hidden pointer-events-none sm:-mx-8 sm:w-full lg:hidden"
+          className="relative z-20 -mx-12 mt-6 w-[130%] self-center overflow-hidden pointer-events-none sm:-mx-8 sm:w-full lg:hidden"
         >
           <Image
-            src="/Easyplacehero1.png"
+            src="/EasyplaceHero1.png"
             alt="Hero Image"
             width={900}
             height={1100}
@@ -315,7 +315,7 @@ const HeroSection = () => {
           className="absolute -right-[8%] top-[-50%] z-20 hidden lg:-right-[10%] lg:w-[600px] lg:h-[750px] lg:block xl:-right-[15%] xl:w-[800px] xl:h-[1000px] 2xl:-right-[23%] 2xl:w-[900px] 2xl:h-[1100px] overflow-hidden pointer-events-none"
         >
           <Image
-            src="/Easyplacehero1.png"
+            src="/EasyplaceHero1.png"
             alt="Hero Image"
             width={900}
             height={1100}
