@@ -18,6 +18,25 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Notify Email Setup
+
+The Notify Me form sends email through a custom SMTP connection using Node.js built-ins. Configure these environment variables in `.env.local` or in your hosting provider:
+
+```bash
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=support@motionsoul.com.au
+SMTP_PASS=your-mailbox-password
+SMTP_FROM=support@motionsoul.com.au
+SMTP_SECURE=false
+SMTP_HELO_NAME=motionsoul.com.au
+NOTIFY_SUPPORT_EMAIL=support@motionsoul.com.au
+```
+
+For best inbox placement, the sending domain should have valid SPF, DKIM, and DMARC records, and `SMTP_FROM` should use a verified mailbox on that domain.
+
+The support notification uses the visitor email as `Reply-To` and sends from the configured `SMTP_FROM` mailbox. This avoids spoofing the visitor address, which is important for deliverability.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

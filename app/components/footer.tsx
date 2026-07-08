@@ -1,190 +1,138 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-const socialLinks = [
-  {
-    name: "Instagram",
-    href: "https://www.instagram.com/motionsoul/",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-5 w-5"
-      >
-        <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-      </svg>
-    ),
-  },
-  {
-    name: "Facebook",
-    href: "https://www.facebook.com/motionsoul/",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-5 w-5"
-      >
-        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-      </svg>
-    ),
-  },
-  {
-    name: "LinkedIn",
-    href: "https://www.linkedin.com/company/motionsoul/",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-5 w-5"
-      >
-        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" />
-        <rect width="4" height="12" x="2" y="9" />
-        <circle cx="4" cy="4" r="2" />
-      </svg>
-    ),
-  },
-  {
-    name: "YouTube",
-    href: "https://www.youtube.com/@motionsoul",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-5 w-5"
-      >
-        <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
-        <path d="m10 15 5-3-5-3z" />
-      </svg>
-    ),
-  },
-  {
-    name: "TikTok",
-    href: "https://www.tiktok.com/@motionsoul",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-5 w-5"
-      >
-        <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-      </svg>
-    ),
-  },
-  {
-    name: "Email",
-    href: "mailto:support@motionsoul.com.au",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-5 w-5"
-      >
-        <rect width="20" height="16" x="2" y="4" rx="2" />
-        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-      </svg>
-    ),
-  },
-];
+import { FormEvent, useState } from "react";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [company, setCompany] = useState("");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [statusMessage, setStatusMessage] = useState("");
+
+  const handleNotifySubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStatus("submitting");
+    setStatusMessage("");
+
+    try {
+      const response = await fetch("/api/notify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, company }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Something went wrong.");
+      }
+
+      setStatus("success");
+      setStatusMessage(data.message);
+      setEmail("");
+      setCompany("");
+    } catch (error) {
+      setStatus("error");
+      setStatusMessage(error instanceof Error ? error.message : "Something went wrong.");
+    }
+  };
+
   return (
     <footer
       id="footer"
-      className="font-jakarta-sans relative w-full overflow-hidden bg-gradient-to-br from-[#7F3486] via-[#B32B7E] to-[#F39E2D] text-[#FAFDEE]"
+      className="font-jakarta-sans relative w-full overflow-hidden bg-[linear-gradient(to_bottom,rgba(127,52,134,0)_0%,rgba(127,52,134,0.55)_42%,rgba(179,43,126,0.85)_70%,#F39E2D_100%)] text-[#FAFDEE]"
     >
-      {/* Tagline + Socials row */}
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-8 px-6 pt-16 sm:px-10 lg:flex-row lg:items-center lg:px-16 lg:pt-20">
-        {/* Tagline — top left */}
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-6 pt-32 sm:px-10 sm:pt-36 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-end lg:px-16 lg:pt-40">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="max-w-xl"
+          className="w-full max-w-2xl"
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#FAFDEE]/70">
-            Motion Soul
-          </p>
-          <h2 className="mt-3 text-2xl font-semibold leading-tight sm:text-3xl lg:text-4xl">
-            Where movement, music and meaning meet —{" "}
-            <span className="italic text-[#FAFDEE]/85">
-              a new chapter begins.
-            </span>
+          <h2 className="whitespace-nowrap text-[21px] font-semibold leading-tight sm:text-3xl lg:text-[34px]">
+            Get notified when Motion Soul goes live.
           </h2>
+          <p className="mt-3 max-w-none whitespace-nowrap text-[11px] font-medium leading-6 text-[#FAFDEE]/75 sm:text-base lg:text-sm xl:text-base">
+            Join the launch list and we will send you a short note when the new website is ready.
+          </p>
+
+          <form
+            className="mt-6 flex w-full flex-col gap-3 sm:flex-row"
+            onSubmit={handleNotifySubmit}
+          >
+            <label htmlFor="footer-notify-email" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="footer-notify-email"
+              type="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="Email address"
+              className="h-12 min-w-0 flex-1 rounded-full border border-white bg-white px-5 py-3 text-base font-semibold text-[#1F3A4B] outline-none shadow-lg transition-colors placeholder:text-[#1F3A4B]/45 focus:border-[#1F3A4B] focus:bg-[#FAFDEE]"
+            />
+            <input
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              value={company}
+              onChange={(event) => setCompany(event.target.value)}
+              className="hidden"
+              aria-hidden="true"
+            />
+            <motion.button
+              type="submit"
+              disabled={status === "submitting"}
+              whileHover={status === "submitting" ? undefined : { y: -2 }}
+              whileTap={status === "submitting" ? undefined : { scale: 0.97 }}
+              className="h-12 rounded-full border border-[#1F3A4B] bg-[#1F3A4B] px-6 text-sm font-bold uppercase tracking-[0.16em] text-white shadow-lg transition-colors hover:bg-[#142B38] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+            >
+              {status === "submitting" ? "Submitting..." : "Notify Me"}
+            </motion.button>
+          </form>
+
+          {statusMessage && (
+            <p
+              className={`mt-3 text-sm font-semibold ${
+                status === "success" ? "text-[#FAFDEE]" : "text-white"
+              }`}
+            >
+              {statusMessage}
+            </p>
+          )}
         </motion.div>
 
-        {/* Socials — top right */}
-        <motion.ul
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-          className="flex flex-wrap items-center gap-3"
+          className="w-full lg:text-right"
         >
-          {socialLinks.map((link) => (
-            <li key={link.name}>
-              <motion.a
-                href={link.href}
-                target="_blank"
-                rel="noreferrer noopener"
-                aria-label={link.name}
-                whileHover={{ y: -3, scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                className="group flex h-11 w-11 items-center justify-center rounded-full border border-[#FAFDEE]/30 bg-white/5 text-[#FAFDEE] backdrop-blur-sm transition-colors hover:border-[#FAFDEE] hover:bg-[#FAFDEE] hover:text-[#B32B7E]"
-              >
-                {link.icon}
-              </motion.a>
-            </li>
-          ))}
-        </motion.ul>
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#FAFDEE]/70">
+            Email
+          </p>
+          <a
+            href="mailto:support@motionsoul.com.au"
+            className="mt-3 inline-flex max-w-full items-center gap-3 break-words text-xl font-semibold leading-tight text-[#FAFDEE] transition-colors hover:text-white sm:text-3xl lg:justify-end"
+          >
+            support@motionsoul.com.au
+          </a>
+        </motion.div>
       </div>
 
-      {/* COMING SOON — big text */}
-      <div className="relative mt-12 w-full px-4 sm:px-8 lg:px-10">
+      <div className="relative z-10 mt-12 w-full px-4 sm:px-8 lg:px-10">
         <motion.h1
           initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center text-[#FAFDEE]
-                     text-[15.5vw] font-bold leading-[0.9] tracking-tighter lg:text-[190px]
-                     py-6"
+          className="whitespace-nowrap py-6 text-center text-[14vw] font-bold leading-none tracking-tight text-white sm:text-[13vw] lg:text-[150px] xl:text-[170px]"
         >
-          COMING <span className="">SOON</span>
+          MOTION SOUL
         </motion.h1>
       </div>
 
@@ -199,8 +147,8 @@ const Footer = () => {
       </div>
 
       {/* Subtle glow accents */}
-      <div className="pointer-events-none absolute -left-32 top-10 h-72 w-72 rounded-full bg-[#F39E2D]/30 blur-3xl" />
-      <div className="pointer-events-none absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-[#7F3486]/40 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 top-10 z-0 h-72 w-72 rounded-full bg-[#F39E2D]/30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-10 z-0 h-80 w-80 rounded-full bg-[#7F3486]/40 blur-3xl" />
     </footer>
   );
 };
