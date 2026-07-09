@@ -16,40 +16,39 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 ## Notify Email Setup
 
 The Notify Me form sends email through a custom SMTP connection using Node.js built-ins. Configure these environment variables in `.env.local` or in your hosting provider:
 
 ```bash
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER=support@motionsoul.com.au
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=support@example.com.[country]
 SMTP_PASS=your-mailbox-password
-SMTP_FROM=support@motionsoul.com.au
-SMTP_SECURE=false
-SMTP_HELO_NAME=motionsoul.com.au
-NOTIFY_SUPPORT_EMAIL=support@motionsoul.com.au
+SMTP_FROM=support@example.com.[country]
+SMTP_SECURE=true
+SMTP_HELO_NAME=example.com.[country]
+NOTIFY_SUPPORT_EMAIL=support@example.com.[country]
 ```
 
-For best inbox placement, the sending domain should have valid SPF, DKIM, and DMARC records, and `SMTP_FROM` should use a verified mailbox on that domain.
+### Generating the Gmail App Password
 
-The support notification uses the visitor email as `Reply-To` and sends from the configured `SMTP_FROM` mailbox. This avoids spoofing the visitor address, which is important for deliverability.
+The `SMTP_PASS` value above must be a Google App Password, not the regular mailbox password. Gmail blocks normal password authentication for SMTP.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Make sure 2-Step Verification is enabled on the Google account:
+   - Go to [myaccount.google.com/security](https://myaccount.google.com/security)
+   - Under "How you sign in to Google," turn on **2-Step Verification**
 
-## Learn More
+2. Generate the app password:
+   - Go to [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
+   - Under **App name**, enter something descriptive.
+   - Click **Create**
+   - Copy the 16-character password shown (e.g. `abcd efgh ijkl mnop`)
 
-To learn more about Next.js, take a look at the following resources:
+3. Paste that value into `SMTP_PASS` in `.env.local` or your hosting provider's environment variables.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Note:** The password is shown only once. If lost, delete the old app password from the App Passwords page and generate a new one.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If "App Passwords" doesn't appear as an option, 2-Step Verification likely isn't fully enabled yet, or (for Google Workspace accounts) an admin has disabled app passwords at the domain level under **Admin Console → Security → Authentication → 2-step verification**.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
