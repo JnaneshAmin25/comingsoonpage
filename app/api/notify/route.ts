@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     const launchSubject = "New Motion Soul launch notification request";
     const userSubject = "Thanks for your interest in Motion Soul";
     const displayName = name || "Motion Soul visitor";
+    const submittedAt = new Date().toISOString();
 
     await sendMail(config, {
       to: supportEmail,
@@ -55,16 +56,17 @@ export async function POST(request: Request) {
         "",
         `Name: ${displayName}`,
         `Email: ${email}`,
-        `Submitted: ${new Date().toISOString()}`,
+        `Submitted: ${submittedAt}`,
       ].join("\n"),
-      html: [
-        "<p>A visitor asked to be notified when Motion Soul is live.</p>",
-        "<ul>",
-        `<li><strong>Name:</strong> ${escapeHtml(displayName)}</li>`,
-        `<li><strong>Email:</strong> ${escapeHtml(email)}</li>`,
-        `<li><strong>Submitted:</strong> ${new Date().toISOString()}</li>`,
-        "</ul>",
-      ].join(""),
+      html: renderEmailTemplate({
+        heading: "New notify-me signup",
+        bodyHtml: [
+          `<p style="margin:0 0 16px;">A visitor asked to be notified when Motion Soul is live.</p>`,
+          renderDetailRow("Name", escapeHtml(displayName)),
+          renderDetailRow("Email", escapeHtml(email)),
+          renderDetailRow("Submitted", escapeHtml(submittedAt)),
+        ].join(""),
+      }),
     });
 
     await sendMail(config, {
@@ -79,11 +81,15 @@ export async function POST(request: Request) {
         "",
         "Motion Soul",
       ].join("\n"),
-      html: [
-        `<p>${name ? `Hi ${escapeHtml(name)},` : "Hi,"}</p>`,
-        "<p>Thanks for your interest in Motion Soul. We will notify you when we are live.</p>",
-        "<p>Motion Soul</p>",
-      ].join(""),
+      html: renderEmailTemplate({
+        heading: "Be there when the curtain rises.",
+        bodyHtml: [
+          `<p style="margin:0 0 16px;">${name ? `Hi ${escapeHtml(name)},` : "Hi,"}</p>`,
+          `<p style="margin:0 0 24px;">Thanks for your interest in Motion Soul. We will notify you the moment we are live.</p>`,
+        ].join(""),
+        buttonText: "Visit Motion Soul",
+        buttonUrl: "https://motionsoul.com.au",
+      }),
     });
 
     return Response.json({
@@ -158,14 +164,14 @@ class SmtpClient {
   static async connect(config: SmtpConfig) {
     const socket = config.secure
       ? tls.connect({
-          host: config.host,
-          port: config.port,
-          servername: config.host,
-        })
+        host: config.host,
+        port: config.port,
+        servername: config.host,
+      })
       : net.connect({
-          host: config.host,
-          port: config.port,
-        });
+        host: config.host,
+        port: config.port,
+      });
 
     const client = new SmtpClient(socket);
     await client.waitForConnect();
@@ -335,6 +341,73 @@ function getEmailDomain(value: string) {
 
 function getHostname() {
   return process.env.SMTP_HELO_NAME || "motionsoul.com.au";
+}
+
+function renderEmailTemplate(options: {
+  heading: string;
+  bodyHtml: string;
+  buttonText?: string;
+  buttonUrl?: string;
+}) {
+  const { heading, bodyHtml, buttonText, buttonUrl } = options;
+
+  const button =
+    buttonText && buttonUrl
+      ? `
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 0;">
+          <tr>
+            <td align="center" bgcolor="#B32B7E" style="border-radius:999px;">
+              <a href="${escapeHtml(buttonUrl)}"
+                 target="_blank"
+                 style="display:inline-block;padding:14px 32px;font-family:'DM Sans',Arial,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#FAFDEE;text-decoration:none;border-radius:999px;">
+                ${escapeHtml(buttonText)}
+              </a>
+            </td>
+          </tr>
+        </table>`
+      : "";
+
+  return `
+<!DOCTYPE html>
+<html lang="en">
+  <body style="margin:0;padding:0;background-color:#EFEFE0;font-family:'DM Sans',Arial,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#EFEFE0;padding:32px 16px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;background-color:#FAFDEE;border-radius:24px;overflow:hidden;">
+            <tr>
+              <td style="padding:28px 32px 0;">
+                <span style="font-family:'DM Sans',Arial,sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;color:#1F3A4B;">MOTION SOUL</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 32px 8px;">
+                <h1 style="margin:0 0 16px;font-family:'DM Sans',Arial,sans-serif;font-size:24px;line-height:1.3;font-weight:700;color:#1F3A4B;">${escapeHtml(heading)}</h1>
+                <div style="font-family:'DM Sans',Arial,sans-serif;font-size:15px;line-height:1.6;color:#1F3A4B;">
+                  ${bodyHtml}
+                </div>
+                ${button}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:28px 32px 28px;">
+                <hr style="border:none;border-top:1px solid rgba(31,58,75,0.12);margin:0 0 16px;" />
+                <p style="margin:0;font-family:'DM Sans',Arial,sans-serif;font-size:12px;color:rgba(31,58,75,0.6);">
+                  Motion Soul Pty Ltd &middot; Arts, culture and creative services
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+}
+
+// Note: `value` must already be escaped by the caller before being passed in.
+function renderDetailRow(label: string, value: string) {
+  return `<p style="margin:0 0 8px;"><strong style="color:#1F3A4B;">${escapeHtml(label)}:</strong> <span style="color:#1F3A4B;">${value}</span></p>`;
 }
 
 function escapeHtml(value: string) {
